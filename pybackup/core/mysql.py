@@ -1,6 +1,4 @@
 # pybackup/core/mysql.py
-from __future__ import annotations
-
 """
 MySQL/MariaDB backup operations.
 
@@ -16,17 +14,19 @@ Typical usage example:
     from pathlib import Path
     from pybackup.core.mysql import MySQLConnInfo, MySQLBackupManager
 
-    conn = MySQLConnInfo(user="backup", password="s3cr3t", socket=Path("/var/run/mysqld/mysqld.sock"))
+    conn = MySQLConnInfo(
+        user="backup", password="s3cr3t", socket=Path("/var/run/mysqld/mysqld.sock"))
     mgr = MySQLBackupManager(conn=conn, output_dir=Path("/var/backups/db"))
     mgr.validate_environment()
     files = mgr.backup_all()
 """
+from __future__ import annotations
 
 import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Optional, Sequence, Set
+from typing import Iterable, List, Optional, Set
 
 from pybackup.constants import (
     MYSQLDUMP_BINARY,
@@ -227,7 +227,8 @@ class MySQLBackupManager:
             res = execute_command(dump_args)
             if res.returncode != 0:
                 raise RuntimeError(
-                    f"mysqldump failed for '{name}' (code={res.returncode}): {res.stderr or res.stdout}"
+                    f"""\
+mysqldump failed for '{name}' (code={res.returncode}): {res.stderr or res.stdout}"""
                 )
 
         # 2) Write stdout to a temporary .sql (avoid shell pipelines).

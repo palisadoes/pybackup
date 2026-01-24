@@ -1,5 +1,5 @@
 # pybackup/operations/pull.py
-from __future__ import annotations
+
 """
 Pull backup operations.
 
@@ -30,6 +30,7 @@ Typical usage example:
     print("Succeeded:", result.succeeded)
     print("Failed:", result.failed)
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,7 +43,7 @@ from pybackup.utils.logging_config import log_error, log_status, log_warning
 from pybackup.utils.ssh import build_rsync_args, build_scp_args
 
 
-`@dataclass`(frozen=True)
+@dataclass(frozen=True)
 class PullResult:
     """Summary of a pull run across multiple hosts.
 
@@ -51,6 +52,7 @@ class PullResult:
       failed: List of hostnames that failed to pull.
       details: Mapping from hostname to a short status message (e.g., error).
     """
+
     succeeded: List[str]
     failed: List[str]
     details: Dict[str, str]
@@ -129,17 +131,23 @@ class PullManager:
                 succeeded.append(hostname)
                 details[hostname] = "ok"
             except KeyboardInterrupt:
-                log_warning("BK-PULL-INT", f"Interrupted while pulling from {hostname}")
+                log_warning(
+                    "BK-PULL-INT", f"Interrupted while pulling from {hostname}"
+                )
                 failed.append(hostname)
                 details[hostname] = "interrupted"
                 if not continue_on_error:
                     raise
             except Exception as exc:
-                log_error("BK-PULL-ERR", f"Failed pulling from {hostname}: {exc}")
+                log_error(
+                    "BK-PULL-ERR", f"Failed pulling from {hostname}: {exc}"
+                )
                 failed.append(hostname)
                 details[hostname] = str(exc)
                 if not continue_on_error:
-                    raise RuntimeError(f"Pull aborted due to failure on {hostname}: {exc}") from exc
+                    raise RuntimeError(
+                        f"Pull aborted due to failure on {hostname}: {exc}"
+                    ) from exc
 
         log_status(
             "BK-PULL-DONE",
@@ -177,8 +185,12 @@ class PullManager:
         bwlimit = int(_get_attr_or_key(host, "bwlimit", 40960))
         ssh_key = _maybe_str(_get_attr_or_key(host, "ssh_key", None))
         use_scp = bool(_get_attr_or_key(host, "scp", False))
-        verify_host_keys = bool(_get_attr_or_key(host, "verify_host_keys", True))
-        known_hosts_file = _maybe_str(_get_attr_or_key(host, "known_hosts_file", None))
+        verify_host_keys = bool(
+            _get_attr_or_key(host, "verify_host_keys", True)
+        )
+        known_hosts_file = _maybe_str(
+            _get_attr_or_key(host, "known_hosts_file", None)
+        )
 
         # Ensure local destination exists
         ensure_directory(local_directory)
@@ -262,7 +274,9 @@ def _require(obj: Dict[str, Any], key: str) -> Any:
       ValueError: If the key is missing or the value is empty/None.
     """
     if key not in obj or obj[key] in (None, ""):
-        raise ValueError(f"Host configuration is missing required field: {key!r}")
+        raise ValueError(
+            f"Host configuration is missing required field: {key!r}"
+        )
     return obj[key]
 
 

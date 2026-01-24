@@ -4,3 +4,4 @@ pyyaml
 docstring_parser
 flit-core
 pydantic
+pytest

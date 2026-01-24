@@ -2,3 +2,5 @@ pymysql
 netifaces
 pyyaml
 docstring_parser
+flit-core
+pydantic

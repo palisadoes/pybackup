@@ -8,3 +8,4 @@ pytest
 psutil
 flake8
 flake8-docstrings
+black

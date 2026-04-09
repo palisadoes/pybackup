@@ -1,7 +1,4 @@
-# pybackup/operations/pull.py
-
-"""
-Pull backup operations.
+"""Pull backup operations.
 
 This module implements the "pull" workflow: retrieving backup files from
 remote hosts to the local machine. It is designed to be orchestrated by the
@@ -30,6 +27,7 @@ Typical usage example:
     print("Succeeded:", result.succeeded)
     print("Failed:", result.failed)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -111,7 +109,8 @@ class PullManager:
           PullResult: Structured summary of per-host results.
 
         Raises:
-          RuntimeError: If continue_on_error is False and one or more hosts fail.
+          RuntimeError: If continue_on_error is False and one or more
+            hosts fail.
         """
         log_status("BK-PULL-START", "Starting pull run")
 
@@ -196,7 +195,8 @@ class PullManager:
         ensure_directory(local_directory)
 
         # Construct rsync/scp arguments
-        src = f"{remote_username}@{hostname}:{str(remote_directory).rstrip('/')}/"
+        src = f"""\
+{remote_username}@{hostname}:{str(remote_directory).rstrip('/')}/"""
         dst = str(local_directory.resolve()).rstrip("/") + "/"
 
         if use_scp:
@@ -226,7 +226,8 @@ class PullManager:
         result = execute_command(argv)
         if result.returncode != 0:
             raise RuntimeError(
-                f"{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"
+                f"""\
+{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"""
             )
 
     # ------------------------------------------------------------------ #

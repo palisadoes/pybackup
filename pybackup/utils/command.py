@@ -1,13 +1,12 @@
-# pybackup/utils/command.py
-"""
-Safe subprocess helpers for pybackup.
+"""Safe subprocess helpers for pybackup.
 
-This module centralizes a few thin wrappers around the Python standard library's
-subprocess APIs so the rest of the codebase can invoke external commands in a
-consistent, testable, and secure way (always shell=False).
+This module centralizes a few thin wrappers around the Python standard
+library's subprocess APIs so the rest of the codebase can invoke external
+commands in a consistent, testable, and secure way (always shell=False).
 
 Key features:
-- CommandResult dataclass capturing argv, exit status, stdout, stderr, and timing.
+- CommandResult dataclass capturing argv, exit status, stdout, stderr,
+  and timing.
 - execute_command() to run a command and capture output.
 - check_call() to run a command and raise CommandError on non‑zero exit.
 - quote_argv() to render argv for logs and diagnostics.
@@ -24,6 +23,7 @@ Typical usage example:
     # Enforce success (raises on non‑zero exit)
     check_call(["/bin/tar", "--version"])
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -109,7 +109,8 @@ def execute_command(
     """Run a command (shell=False), capture output, and return a CommandResult.
 
     Security:
-      - Always uses shell=False. Callers must pass argv as a sequence of tokens.
+      - Always uses shell=False. Callers must pass argv as a
+        sequence of tokens.
       - Callers are responsible for input validation and quoting/escaping at
         argument boundaries as appropriate for the target executable.
 
@@ -119,17 +120,21 @@ def execute_command(
       cwd: Optional working directory for the child process.
       env: Optional environment overlay. Values here override the current
         process environment; absent keys inherit from os.environ.
-      timeout: Optional timeout in seconds. If exceeded, subprocess.TimeoutExpired
-        is raised (no CommandResult is returned).
-      encoding: Text encoding used to decode stdout/stderr (capture is always in text mode).
+      timeout: Optional timeout in seconds. If exceeded,
+        subprocess.TimeoutExpired is raised (no CommandResult is returned).
+      encoding: Text encoding used to decode stdout/stderr
+        (capture is always in text mode).
       errors: Error handler for decoding (e.g., "replace", "ignore").
 
     Returns:
-      CommandResult: Immutable record containing argv, exit status, output, and timing.
+      CommandResult: Immutable record containing argv, exit status,
+        output, and timing.
 
     Raises:
-      subprocess.TimeoutExpired: If the process does not complete within `timeout`.
-      OSError: If the executable cannot be found or the process cannot be started.
+      subprocess.TimeoutExpired: If the process does not complete
+        within `timeout`.
+      OSError: If the executable cannot be found or the process cannot
+        be started.
 
     Examples:
       >>> res = execute_command(["/bin/echo", "hello"])

@@ -1,6 +1,4 @@
-# test/conftest.py
-"""
-Pytest configuration and shared fixtures.
+"""Pytest configuration and shared fixtures.
 
 This module provides:
 - Repository root bootstrap for imports from the source tree.
@@ -24,7 +22,8 @@ def ensure_repo_on_sys_path() -> None:
     """Ensure repository root is on sys.path for direct source imports.
 
     This fixture lets tests import the pybackup package without installing it.
-    It prepends the repository root (parent of the 'test' directory) to sys.path.
+    It prepends the repository root (parent of the 'test' directory)
+      to sys.path.
     """
     test_root = Path(__file__).resolve().parent
     repo_root = test_root.parent

@@ -1,7 +1,4 @@
-# pybackup/utils/logging_config.py
-
-"""
-Centralized logging configuration for pybackup.
+"""Centralized logging configuration for pybackup.
 
 This module provides a small API for configuring and using structured logging
 across the project. It standardizes:
@@ -25,6 +22,7 @@ Design notes:
 - The file handler captures DEBUG-and-above; the console handler defaults to
   INFO-and-above.
 """
+
 from __future__ import annotations
 
 import getpass
@@ -86,9 +84,9 @@ def setup_logging(
 ) -> logging.Logger:
     """Configure and return the project's root logger.
 
-    This function initializes a rotating file handler and, optionally, a console
-    handler. It also installs a LogContextFilter to enrich records with a
-    "username" and default "code" if not provided.
+    This function initializes a rotating file handler and, optionally,
+    a console handler. It also installs a LogContextFilter to enrich records
+    with a "username" and default "code" if not provided.
 
     The function is idempotent with respect to handlers: any existing handlers
     on the named logger are cleared before adding new ones, ensuring repeated
@@ -134,7 +132,9 @@ def setup_logging(
     logger.propagate = False
 
     # Standardized formatter includes username and code in brackets.
-    fmt = "%(asctime)s - %(name)s - %(levelname)s - [%(username)s] (%(code)s): %(message)s"
+    fmt = """\
+%(asctime)s - %(name)s - %(levelname)s - [%(username)s] \
+(%(code)s): %(message)s"""
     datefmt = "%Y-%m-%d %H:%M:%S"
     formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
 
@@ -260,10 +260,12 @@ def log_and_exit(code: str, message: str, exit_code: int = EXIT_ERROR) -> None:
 
 
 def log2die(code: str, message: str, die: bool = True) -> None:
-    """Backward-compatible wrapper for legacy log2die() usage.
+    """Backward-compatible wrapper for legacy usage.
 
-    The pybackup codebase historically used log2die(code, message, die=True|False).
-    This wrapper preserves that API while delegating to the new logging helpers.
+    The pybackup codebase historically used
+      log2die(code, message, die=True|False).
+    This wrapper preserves that API while delegating to the new
+      logging helpers.
 
     Args:
       code: A short tag for the event (e.g., "BK-XXXX").

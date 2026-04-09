@@ -1,14 +1,12 @@
-# pybackup/utils/ssh.py
-
-"""
-SSH/transfer command builders.
+"""SSH/transfer command builders.
 
 This module centralizes the construction of safe argument vectors for rsync and
 scp without using a shell. It also provides a helper to assemble a consistent
 set of SSH options (identity file, port, host-key verification, known_hosts).
 
 Key design notes:
-- All subprocess calls should use shell=False with the argv lists returned here.
+- All subprocess calls should use shell=False with the argv lists
+  returned here.
 - For rsync, the --rsh argument must be a single string describing the SSH
   command; we quote each token using shlex.quote so rsync’s internal shell can
   parse it safely when it spawns the remote shell.
@@ -31,6 +29,7 @@ Typical usage example:
     )
     result = execute_command(argv)
 """
+
 from __future__ import annotations
 
 import shlex
@@ -78,7 +77,8 @@ def build_ssh_base_args(
 
       With host key verification disabled:
         >>> build_ssh_base_args(None, verify_host_keys=False)
-        ['ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no']
+        ['ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null',
+          '-o', 'StrictHostKeyChecking=no']
     """
     _validate_port(port)
     args: List[str] = ["ssh", "-p", str(port)]
@@ -89,9 +89,11 @@ def build_ssh_base_args(
     if verify_host_keys:
         if known_hosts_file:
             args += ["-o", f"UserKnownHostsFile={known_hosts_file}"]
-        # Default StrictHostKeyChecking is secure enough (ask/yes via user config).
+        # Default StrictHostKeyChecking is secure enough
+        # (ask/yes via user config).
     else:
-        # Disable known_hosts usage and host-key checking explicitly (less secure).
+        # Disable known_hosts usage and host-key checking
+        # explicitly (less secure).
         args += [
             "-o",
             "UserKnownHostsFile=/dev/null",
@@ -238,7 +240,8 @@ def build_scp_args(
       ValueError: If the port is invalid.
 
     Examples:
-      >>> build_scp_args("/var/backups/", "user@host:/srv/backup/", None, 22)[:2]
+      >>> build_scp_args("/var/backups/", "user@host:/srv/backup/",
+        None, 22)[:2]
       ['/usr/bin/scp', '-P']
     """
     _validate_port(port)
@@ -318,7 +321,8 @@ def _quote_for_rsync_rsh(tokens: Sequence[str]) -> str:
     metacharacters.
 
     Args:
-      tokens: Sequence of SSH tokens (e.g., ['ssh', '-p', '22', '-i', '/path']).
+      tokens: Sequence of SSH tokens
+        (e.g., ['ssh', '-p', '22', '-i', '/path']).
 
     Returns:
       str: A single safely-quoted string suitable for --rsh.

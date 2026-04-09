@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-pybackup CLI entrypoint.
+"""pybackup CLI entrypoint.
 
 This module provides a thin command-line interface (CLI) for the pybackup
 package. It is responsible for:
@@ -98,20 +97,13 @@ except Exception:  # pragma: no cover - minimal fallback
     import logging
 
     def setup_logging(
-        log_file: Optional[str] = None,
         level: str = "INFO",
-        max_bytes: int = 10 * 1024 * 1024,
-        backup_count: int = 5,
-        console_output: bool = True,
     ) -> logging.Logger:
-        """Set up a minimal logger when pybackup.utils.logging_config is unavailable.
+        """Set up a minimal logger when pybackup.utils.logging_config
+            is unavailable.
 
         Args:
-          log_file: Ignored in fallback; logging goes to the console.
           level: Logging level name (e.g., 'INFO', 'DEBUG').
-          max_bytes: Ignored in fallback.
-          backup_count: Ignored in fallback.
-          console_output: Ignored in fallback.
 
         Returns:
           logging.Logger: Configured stdlib logger.
@@ -146,7 +138,7 @@ except Exception:  # pragma: no cover - minimal fallback
 # --------------------------------------------------------------------------------------
 try:
     # Preferred: validated, typed config loader.
-    from pybackup.core.config import load_config as _typed_load_config  # type: ignore
+    from pybackup.core.config import load_config as _typed_load_config
 except Exception:  # pragma: no cover
     _typed_load_config = None
 
@@ -336,7 +328,8 @@ def run_local(cfg: Any, args: argparse.Namespace) -> int:
             (
                 "[local] dry-run: "
                 f"backup_dir={backup_dir}, directories={directories}, "
-                f"exclude={exclude}, cluster_ip={cluster_ip}, max_age={args.max_age}"
+                f"""\
+exclude={exclude}, cluster_ip={cluster_ip}, max_age={args.max_age}"""
             ),
         )
         return EXIT_SUCCESS
@@ -534,7 +527,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         log_error("BK-CLI", f"Configuration file not found: {cfg_path}")
         return EXIT_ERROR
 
-    cfg = load_config(cfg_path)
     try:
         cfg = load_config(cfg_path)
     except Exception as exc:  # pragma: no cover - depends on environment

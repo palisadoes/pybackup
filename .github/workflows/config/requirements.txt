@@ -6,3 +6,5 @@ flit-core
 pydantic
 pytest
 psutil
+flake8
+flake8-docstrings

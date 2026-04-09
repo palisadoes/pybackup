@@ -1,6 +1,4 @@
-# pybackup/operations/local.py
-"""
-Local backup operations.
+"""Local backup operations.
 
 This module implements the local backup workflow:
 - Optional database dump(s).
@@ -22,6 +20,7 @@ Typical usage example:
     )
     manager.run(cluster_ip=None, max_age_days=7)
 """
+
 from __future__ import annotations
 
 import os
@@ -52,8 +51,8 @@ class LocalBackupResult:
     """Summary of a local backup run.
 
     Attributes:
-        archive (Optional[Path]): Final path of the filesystem archive produced,
-            or None if the filesystem phase did not run.
+        archive (Optional[Path]): Final path of the filesystem
+            archive produced, or None if the filesystem phase did not run.
         database_files (List[Path]): Paths to database dump files produced.
         purged_count (int): Number of archived files purged by retention.
     """
@@ -79,8 +78,9 @@ class LocalBackupManager:
         backup_dir (Path): Destination directory for backup outputs.
         directories (List[Path]): Directories to back up into the archive.
         exclude (List[str]): Patterns to exclude from the tar archive.
-        mysqldb (Any | None): Optional MySQL configuration object. When provided,
-            a database backup phase is executed before the filesystem phase.
+        mysqldb (Any | None): Optional MySQL configuration object. When
+            provided, a database backup phase is executed before the
+            filesystem phase.
         tar_binary (str): Filesystem path to the tar executable.
         nice_binary (str): Filesystem path to the nice executable.
         file_mode (int): Octal file permissions to apply to the final archive.
@@ -202,7 +202,8 @@ class LocalBackupManager:
         renamed to the final destination only if the tar command succeeds.
 
         Returns:
-            Path: The final archive path (e.g., /var/backups/files-YYYYmmdd-HHMMSS.tgz).
+            Path: The final archive path
+                (e.g., /var/backups/files-YYYYmmdd-HHMMSS.tgz).
 
         Raises:
             RuntimeError: If the tar command fails.
@@ -224,7 +225,8 @@ class LocalBackupManager:
             except Exception:
                 pass
             raise RuntimeError(
-                f"tar failed (code={result.returncode}): {result.stderr or result.stdout}"
+                f"""\
+tar failed (code={result.returncode}): {result.stderr or result.stdout}"""
             )
 
         # Apply permissions to the temporary file, then atomically rename.
@@ -240,8 +242,8 @@ class LocalBackupManager:
         """Run database backup(s) when a MySQL configuration is supplied.
 
         This method is a no-op when `MySQLBackupManager` is unavailable at
-        runtime. When available, it expects `self.mysqldb` to provide attributes
-        or mapping keys: "user", "password", and optional "socket".
+        runtime. When available, it expects `self.mysqldb` to provide
+        attributes or mapping keys: "user", "password", and optional "socket".
 
         Args:
             output_dir: Directory into which database dumps should be written.
@@ -265,7 +267,8 @@ class LocalBackupManager:
 
         if not user or not password:
             raise RuntimeError(
-                "MySQL credentials incomplete: 'user' and 'password' are required"
+                """\
+MySQL credentials incomplete: 'user' and 'password' are required"""
             )
 
         sock_path = Path(socket_value) if socket_value else None
@@ -273,8 +276,9 @@ class LocalBackupManager:
         # Initialize and run DB backup manager.
         ensure_directory(output_dir)
         manager = MySQLBackupManager(
-            # The MySQLBackupManager constructor is expected to accept user, password, and socket.
-            # If your implementation differs, adjust the calls below accordingly.
+            # The MySQLBackupManager constructor is expected to
+            # accept user, password, and socket. If your implementation
+            # differs, adjust the calls below accordingly.
             conn=type(
                 "Conn",
                 (),

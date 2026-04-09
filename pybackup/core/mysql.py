@@ -1,6 +1,4 @@
-# pybackup/core/mysql.py
-"""
-MySQL/MariaDB backup operations.
+"""MySQL/MariaDB backup operations.
 
 This module provides a small, testable wrapper for creating logical backups of
 MySQL or MariaDB databases. The design goals are:
@@ -15,11 +13,13 @@ Typical usage example:
     from pybackup.core.mysql import MySQLConnInfo, MySQLBackupManager
 
     conn = MySQLConnInfo(
-        user="backup", password="s3cr3t", socket=Path("/var/run/mysqld/mysqld.sock"))
+        user="backup", password="s3cr3t",
+        socket=Path("/var/run/mysqld/mysqld.sock"))
     mgr = MySQLBackupManager(conn=conn, output_dir=Path("/var/backups/db"))
     mgr.validate_environment()
     files = mgr.backup_all()
 """
+
 from __future__ import annotations
 
 import os
@@ -42,7 +42,8 @@ try:
     import pymysql  # type: ignore
 except (
     Exception
-) as _e:  # pragma: no cover - import errors are handled at call-time
+) as _:  # pragma: no cover - import errors are handled at call-time
+    print(_)
     pymysql = None  # type: ignore
 
 
@@ -61,7 +62,8 @@ class MySQLConnInfo:
     Attributes:
         user: Database user to connect as (e.g., "backup").
         password: Password for the database user.
-        socket: Optional UNIX-domain socket path (e.g., /var/run/mysqld/mysqld.sock).
+        socket: Optional UNIX-domain socket path
+            (e.g., /var/run/mysqld/mysqld.sock).
         host: Optional hostname to connect to when no socket is provided.
             Defaults to "localhost" if not set and socket is None.
         port: Optional port for TCP connections. Defaults to 3306 when used.
@@ -75,16 +77,19 @@ class MySQLConnInfo:
 
 
 class MySQLBackupManager:
-    """Creates logical dumps of MySQL/MariaDB databases and writes compressed files.
+    """Creates logical dumps of MySQL/MariaDB databases and
+        writes compressed files.
 
     This manager encapsulates the following phases:
     1) Environment checks (output directory).
     2) Database discovery (SHOW DATABASES).
     3) Dumping each database via mysqldump (using a secure options file).
-    4) Compressing dumps to <name>-YYYYmmdd-HHMMSS.sql.gz and setting permissions.
+    4) Compressing dumps to <name>-YYYYmmdd-HHMMSS.sql.gz and
+       setting permissions.
 
     The implementation intentionally:
-    - Avoids shell pipelines by capturing mysqldump stdout and then calling gzip.
+    - Avoids shell pipelines by capturing mysqldump stdout and then
+        calling gzip.
     - Ensures passwords are not present in process lists or logs by using
       --defaults-extra-file with a temporary credentials file.
 
@@ -105,9 +110,11 @@ class MySQLBackupManager:
         """Initialize a MySQLBackupManager.
 
         Args:
-            conn: Connection info (user, password, and optional socket/host/port).
+            conn: Connection info (user, password, and optional
+                socket/host/port).
             output_dir: Directory where dump files will be written.
-            exclude: Iterable of database names to skip (in addition to system DBs).
+            exclude: Iterable of database names to skip
+                (in addition to system DBs).
             gzip_level: Gzip compression level (1..9). Defaults to 9.
 
         Raises:
@@ -135,7 +142,8 @@ class MySQLBackupManager:
             PermissionError: If the output directory cannot be created/written.
         """
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        # Attempt a lightweight write test (optional; failures will occur at dump time otherwise).
+        # Attempt a lightweight write test (optional; failures will occur
+        # at dump time otherwise).
         test_path = self.output_dir / ".pybackup_write_test"
         try:
             test_path.write_text("ok", encoding="utf-8")
@@ -148,19 +156,21 @@ class MySQLBackupManager:
     def list_databases(self) -> List[str]:
         """Return a list of database names to dump.
 
-        This connects to the server using either a UNIX socket or TCP (host/port)
-        and runs "SHOW DATABASES". System databases and any explicitly excluded
-        names are filtered out.
+        This connects to the server using either a UNIX socket or TCP
+        (host/port) and runs "SHOW DATABASES". System databases and
+        any explicitly excluded names are filtered out.
 
         Returns:
             List[str]: Database names eligible for dumping.
 
         Raises:
-            RuntimeError: If pymysql is not installed or a connection error occurs.
+            RuntimeError: If pymysql is not installed or a connection
+                error occurs.
         """
         if pymysql is None:
             raise RuntimeError(
-                "The 'pymysql' package is required to list databases but is not installed."
+                "The 'pymysql' package is required to "
+                "list databases but is not installed."
             )
 
         # Construct connection kwargs for socket or TCP.
@@ -197,7 +207,8 @@ class MySQLBackupManager:
 
         Implementation details:
         - A temporary MySQL options file is created with user/password/socket.
-        - mysqldump is executed with --defaults-extra-file pointing to that file.
+        - mysqldump is executed with --defaults-extra-file pointing
+            to that file.
         - The SQL text is captured and written to a temporary .sql file.
         - gzip is invoked to compress the .sql file into .sql.gz.
         - The .sql.gz file's permissions are set to BACKUP_FILE_PERMISSIONS.
@@ -228,7 +239,8 @@ class MySQLBackupManager:
             if res.returncode != 0:
                 raise RuntimeError(
                     f"""\
-mysqldump failed for '{name}' (code={res.returncode}): {res.stderr or res.stdout}"""
+mysqldump failed for '{name}' (code={res.returncode}): \
+{res.stderr or res.stdout}"""
                 )
 
         # 2) Write stdout to a temporary .sql (avoid shell pipelines).
@@ -251,7 +263,8 @@ mysqldump failed for '{name}' (code={res.returncode}): {res.stderr or res.stdout
         if gz.returncode != 0:
             # If gzip fails, the .sql file may remain present.
             raise RuntimeError(
-                f"gzip failed for '{name}' (code={gz.returncode}): {gz.stderr or gz.stdout}"
+                f"""\
+gzip failed for '{name}' (code={gz.returncode}): {gz.stderr or gz.stdout}"""
             )
 
         # 4) Harden permissions on the final .gz.

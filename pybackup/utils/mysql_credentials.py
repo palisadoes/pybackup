@@ -1,7 +1,4 @@
-# pybackup/utils/mysql_credentials.py
-
-"""
-MySQL credentials file utilities.
+"""MySQL credentials file utilities.
 
 This module provides a safe way to create and manage temporary MySQL/MariaDB
 options files for use with --defaults-extra-file. The goals are:
@@ -21,9 +18,11 @@ Typical usage example:
     socket = "/var/run/mysqld/mysqld.sock"
 
     with mysql_defaults_file(user, password, socket) as cnf:
-        argv = [MYSQLDUMP_BINARY, f"--defaults-extra-file={cnf}", "--single-transaction", "mydb"]
+        argv = [MYSQLDUMP_BINARY, f"--defaults-extra-file={cnf}",
+          "--single-transaction", "mydb"]
         # run subprocess with shell=False
 """
+
 from __future__ import annotations
 
 import os
@@ -112,7 +111,8 @@ def mysql_defaults_file(
     fd, path = _secure_mkstemp(suffix=".cnf", prefix="pybackup_")
     p = Path(path)
     try:
-        # Set restrictive permissions on the file descriptor first (best effort).
+        # Set restrictive permissions on the file descriptor first
+        # (best effort).
         _set_secure_permissions(fd, p)
 
         # Write the credentials content using the open file descriptor.
@@ -126,13 +126,15 @@ def mysql_defaults_file(
         try:
             os.chmod(p, 0o600)
         except Exception:
-            # Non-fatal; permissions should already be restricted by fchmod above.
+            # Non-fatal; permissions should already be
+            # restricted by fchmod above.
             pass
 
         yield p
     finally:
         try:
-            # Best-effort cleanup; secrecy is more important than error reporting here.
+            # Best-effort cleanup; secrecy is more
+            # important than error reporting here.
             p.unlink(missing_ok=True)
         except Exception:
             # Suppress cleanup errors to avoid masking the original exception.
@@ -157,8 +159,8 @@ def _secure_mkstemp(
     Args:
       suffix: Optional filename suffix, e.g., ".cnf".
       prefix: Optional filename prefix; defaults to "pybackup_".
-      directory: Optional directory in which to create the file. Defaults to the
-        platform's secure temp directory.
+      directory: Optional directory in which to create the file.
+        Defaults to the platform's secure temp directory.
 
     Returns:
       tuple[int, str]: The file descriptor and absolute path to the file.
@@ -170,7 +172,8 @@ def _secure_mkstemp(
     fd, path = tempfile.mkstemp(
         suffix=suffix, prefix=prefix, dir=directory, text=True
     )
-    # Attempt to set close-on-exec (POSIX). If it fails or is unsupported, ignore.
+    # Attempt to set close-on-exec (POSIX). If it fails
+    # or is unsupported, ignore.
     try:
         if hasattr(os, "set_inheritable"):
             os.set_inheritable(fd, False)  # Python-level CLOEXEC guard

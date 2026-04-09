@@ -1,7 +1,4 @@
-# pybackup/utils/filesystem.py
-
-"""
-Filesystem utilities for pybackup.
+r"""Filesystem utilities for pybackup.
 
 This module centralizes small, reusable helpers for safe and predictable
 filesystem operations used across pybackup. Goals:
@@ -25,6 +22,7 @@ Typical usage examples:
     write_text_atomic(Path("/var/backups/info.txt"), "ok\\n")
     removed = cleanup_files(Path("/var/backups"), "*.tgz", max_age_days=7)
 """
+
 from __future__ import annotations
 
 import os
@@ -127,7 +125,7 @@ def validate_path_exists(path: Path, kind: str = "dir") -> None:
 
     Examples:
       >>> from pathlib import Path
-      >>> validate_path_exists(Path("/etc"), kind="dir")  # may raise on non-Unix
+      >>> validate_path_exists(Path("/etc"), kind="dir")
     """
     path = Path(path)
     if not path.exists():
@@ -251,7 +249,7 @@ def write_text_atomic(
 def write_bytes_atomic(
     path: Path, data: bytes, mode: int = BACKUP_FILE_PERMISSIONS
 ) -> Path:
-    """Write bytes to a file atomically with a temporary sibling and replace.
+    r"""Write bytes to a file atomically with a temporary sibling and replace.
 
     Args:
       path: Destination file path.
@@ -266,7 +264,7 @@ def write_bytes_atomic(
 
     Examples:
       >>> from pathlib import Path
-      >>> _ = write_bytes_atomic(Path("/tmp/example.bin"), b"\\x00")  # doctest: +SKIP
+      >>> _ = write_bytes_atomic(Path("/tmp/example.bin"), b"\\x00")
     """
     path = Path(path)
     ensure_parent_dir(path)
@@ -296,15 +294,16 @@ def list_files_older_than(
     Args:
       directory: Directory to scan.
       pattern: Glob-style file pattern (e.g., "*.tgz").
-      max_age_days: Age threshold in whole days; files older than this are returned.
+      max_age_days: Age threshold in whole days; files older than
+        this are returned.
 
     Returns:
-      List[Path]: Matching files older than the threshold. Returns an empty list
-      if the directory does not exist.
+      List[Path]: Matching files older than the threshold. Returns an
+        empty list if the directory does not exist.
 
     Examples:
       >>> from pathlib import Path
-      >>> # list_files_older_than(Path('/var/backups'), '*.tgz', 7)  # doctest: +SKIP
+      >>> list_files_older_than(Path('/var/backups'), '*.tgz', 7)
     """
     directory = Path(directory)
     if not directory.is_dir():
@@ -331,7 +330,8 @@ def cleanup_files(directory: Path, pattern: str, max_age_days: int) -> int:
     Args:
       directory: Directory to scan.
       pattern: Glob-style file pattern (e.g., "*.tgz").
-      max_age_days: Age threshold in whole days; files older than this are deleted.
+      max_age_days: Age threshold in whole days; files older than this
+        are deleted.
 
     Returns:
       int: Count of files successfully removed.

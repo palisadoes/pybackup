@@ -1,7 +1,4 @@
-# pybackup/operations/push.py
-
-"""
-Push backup operations.
+"""Push backup operations.
 
 This module implements the "push" workflow: sending backup files from
 the local machine to one or more remote hosts. It is designed to be
@@ -30,6 +27,7 @@ Typical usage example:
     print("Succeeded:", result.succeeded)
     print("Failed:", result.failed)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -49,7 +47,8 @@ class PushResult:
     Attributes:
       succeeded: List of hostnames for which the push completed successfully.
       failed: List of hostnames that failed to push.
-      details: Mapping from hostname to a short status message (e.g., "ok" or an error).
+      details: Mapping from hostname to a short status message
+        (e.g., "ok" or an error).
     """
 
     succeeded: List[str]
@@ -113,7 +112,8 @@ class PushManager:
           PushResult: Structured summary of per-host results.
 
         Raises:
-          RuntimeError: If continue_on_error is False and one or more hosts fail.
+          RuntimeError: If continue_on_error is False and one or
+            more hosts fail.
         """
         log_status("BK-PUSH-START", "Starting push run")
 
@@ -207,7 +207,8 @@ class PushManager:
 
         # Ensure remote string is constructed (cannot ensure remote directory).
         src = str(local_directory.resolve()).rstrip("/") + "/"
-        dst = f"{remote_username}@{hostname}:{str(remote_directory).rstrip('/')}/"
+        dst = f"""\
+{remote_username}@{hostname}:{str(remote_directory).rstrip('/')}/"""
 
         # Build transfer argv.
         if use_scp:
@@ -237,7 +238,8 @@ class PushManager:
         result = execute_command(argv)
         if result.returncode != 0:
             raise RuntimeError(
-                f"{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"
+                f"""\
+{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"""
             )
 
 

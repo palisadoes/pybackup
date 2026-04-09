@@ -1,7 +1,4 @@
-# pybackup/core/config.py
-
-"""
-pybackup.core.config
+"""pybackup.core.config.
 
 Configuration models and loader for pybackup.
 
@@ -21,6 +18,7 @@ Example:
     >>> cfg.backup_dir
     PosixPath('/var/backups')
 """
+
 from __future__ import annotations
 
 import ipaddress
@@ -50,7 +48,8 @@ except Exception:
     _DEFAULT_LOG_PATH = "/var/log/backups/backups.log"
 
 
-# Prefer Pydantic v2; fall back to a v1-compatible surface if v2 is unavailable.
+# Prefer Pydantic v2; fall back to a v1-compatible
+# surface if v2 is unavailable.
 try:  # Pydantic v2
     from pydantic import (
         BaseModel,
@@ -123,8 +122,10 @@ class HostConfig(BaseModel):
     Attributes:
       hostname: Remote DNS name or IP literal (basic format validated).
       remote_username: Username to use over SSH/SCP/rsync.
-      remote_directory: Destination (push) or source (pull) directory on the remote host.
-      local_directory: Source (push) or destination (pull) directory on this host.
+      remote_directory: Destination (push) or source (pull) directory on the
+        remote host.
+      local_directory: Source (push) or destination (pull) directory on this
+        host.
       ssh_port: SSH port (1..65535). Defaults to 22.
       bwlimit: Bandwidth limit in KB/s for rsync. Defaults to ~40 MB/s.
       ssh_key: Optional identity file path; overrides global ssh_key when set.
@@ -246,7 +247,7 @@ class HostConfig(BaseModel):
             return v
 
         @field_validator("bwlimit")
-        def _bwlimit_positive_v1(self, v: int) -> int:  # type: ignore[override]
+        def _bwlimit_positive_v1(self, v: int) -> int:
             """Validate that bwlimit is a positive integer (KB/s).
 
             Args:
@@ -546,7 +547,7 @@ class BackupConfig(BaseModel):
     else:
 
         @field_validator("cluster_ip")
-        def _cluster_ip_ok_v1(self, v: Optional[str]) -> Optional[str]:  # type: ignore[override]
+        def _cluster_ip_ok_v1(self, v: Optional[str]) -> Optional[str]:
             """Validate that cluster_ip, when present, is a valid IPv4/IPv6.
 
             Args:

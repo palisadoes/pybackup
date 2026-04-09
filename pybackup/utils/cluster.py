@@ -1,6 +1,4 @@
-# pybackup/utils/cluster.py
-"""
-Cluster-awareness utilities.
+"""Cluster-awareness utilities.
 
 This module provides helpers to:
 - Discover local interface IP addresses (IPv4 and IPv6).
@@ -18,6 +16,7 @@ Typical usage example:
     if not check_cluster_master(cluster_ip="10.0.0.10", mode_name="local"):
         return  # skip work on non-master nodes
 """
+
 from __future__ import annotations
 
 import ipaddress
@@ -43,7 +42,8 @@ def get_local_ips(
     a stdlib-only fallback (socket.getaddrinfo) provides best-effort results.
 
     Args:
-      include_loopback: If True, include loopback addresses (e.g., 127.0.0.1, ::1).
+      include_loopback: If True, include loopback addresses
+        (e.g., 127.0.0.1, ::1).
       ipv6: If True, return IPv6 addresses; otherwise return IPv4 addresses.
 
     Returns:
@@ -60,7 +60,8 @@ def get_local_ips(
 
     if psutil is not None:  # Preferred path
         try:
-            for infos in psutil.net_if_addrs().values():  # type: ignore[attr-defined]
+            # type: ignore[attr-defined]
+            for infos in psutil.net_if_addrs().values():
                 for info in infos:
                     if getattr(info, "family", None) == family:
                         addr = _strip_scope_id(
@@ -127,7 +128,8 @@ def check_cluster_master(cluster_ip: Optional[str], mode_name: str) -> bool:
     Args:
       cluster_ip: The IPv4/IPv6 address designating the active/master node,
         or None/empty for no gating.
-      mode_name: A short label for the calling mode (e.g., "local", "push", "pull").
+      mode_name: A short label for the calling mode
+        (e.g., "local", "push", "pull").
 
     Returns:
       bool: True if work should proceed on this node; False to skip.
@@ -151,7 +153,8 @@ def _strip_scope_id(addr: str) -> str:
     """Strip an IPv6 scope ID (zone index) if present.
 
     Args:
-      addr: IPv6 address string, potentially containing a scope (e.g., "%eth0").
+      addr: IPv6 address string, potentially containing a scope
+        (e.g., "%eth0").
 
     Returns:
       str: Address without the scope suffix.
@@ -172,7 +175,8 @@ def _get_local_ips_stdlib(family: int) -> Set[str]:
       family: socket.AF_INET for IPv4 or socket.AF_INET6 for IPv6.
 
     Returns:
-      Set[str]: A set of discovered IP address strings (scope-stripped for IPv6).
+      Set[str]: A set of discovered IP address strings
+        (scope-stripped for IPv6).
     """
     addrs: Set[str] = set()
     try:

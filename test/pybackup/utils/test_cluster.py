@@ -28,6 +28,14 @@ def test_cluster_master_no_ip_allows() -> None:
 def test_check_cluster_master_message_when_not_master(monkeypatch) -> None:
     """Test gating returns False when the requested IP is not present."""
     # Pick an unlikely IP to be present locally.
+
+    monkeypatch.setattr(
+        "pybackup.utils.cluster.get_local_ips",
+        lambda include_loopback=True, ipv6=False: (
+            ["10.0.0.10"] if not ipv6 else ["fe80::1"]
+        ),
+    )
+    assert check_cluster_master("198.51.100.99", mode_name="local") is False
     assert check_cluster_master("198.51.100.99", mode_name="local") in (
         True,
         False,
@@ -37,6 +45,14 @@ def test_check_cluster_master_message_when_not_master(monkeypatch) -> None:
 def test_check_cluster_master_message_when_master(monkeypatch) -> None:
     """Test gating returns True when the requested IP is present."""
     # Pick an likely IP to be present locally.
+    monkeypatch.setattr(
+        "pybackup.utils.cluster.get_local_ips",
+        lambda include_loopback=True, ipv6=False: (
+            ["127.0.0.1"] if not ipv6 else ["::1"]
+        ),
+    )
+    assert check_cluster_master("127.0.0.1", mode_name="local") is True
+    assert check_cluster_master("::1", mode_name="local") is True
     assert check_cluster_master("127.0.0.1", mode_name="local") in (
         True,
         True,

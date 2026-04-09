@@ -26,7 +26,7 @@ def test_build_defaults_file_content_includes_fields() -> None:
     )
 
 
-def test_mysql_defaults_file_creates_and_removes(tmp_path) -> None:
+def test_mysql_defaults_file_creates_and_removes() -> None:
     """Test context manager creates 0600 file and deletes it after exit."""
     with mysql_defaults_file("user", "pass", "/tmp/sock") as cnf_path:
         st = os.stat(cnf_path)

@@ -4,7 +4,7 @@ Pytest configuration and shared fixtures.
 
 This module provides:
 - Repository root bootstrap for imports from the source tree.
-- Helpers for loading the CLI module from bin/pybackup.py.
+- Helpers for loading the CLI module from bin/py_backup.py.
 - A factory for building CommandResult-like objects for command mocks.
 """
 
@@ -14,6 +14,7 @@ import importlib.util
 import sys
 from pathlib import Path
 from typing import Any, Callable
+import os
 
 import pytest
 
@@ -78,7 +79,7 @@ def fake_cmdresult():
 
 @pytest.fixture()
 def load_cli_module() -> Callable[[], Any]:
-    """Provide a callable that loads the CLI module from bin/pybackup.py.
+    """Provide a callable that loads the CLI module from bin/py_backup.py.
 
     Returns:
       Callable[[], Any]: Function that loads and returns the CLI module object.
@@ -87,7 +88,7 @@ def load_cli_module() -> Callable[[], Any]:
     def _loader() -> Any:
         test_root = Path(__file__).resolve().parent
         repo_root = test_root.parent
-        cli_path = repo_root / "bin" / "pybackup.py"
+        cli_path = f"{repo_root}{os.sep}bin{os.sep}py_backup.py"
         spec = importlib.util.spec_from_file_location("pybackup_cli", cli_path)
         assert spec and spec.loader, f"Cannot create spec for {cli_path}"
         mod = importlib.util.module_from_spec(spec)

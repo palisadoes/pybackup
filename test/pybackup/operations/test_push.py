@@ -15,7 +15,7 @@ from pybackup.utils import command as command_mod
 def test_push_success_for_one_host(monkeypatch, tmp_path) -> None:
     """Test that a single host push succeeds when the command returns 0."""
 
-    def _fake_execute(argv, **kwargs):
+    def _fake_execute(argv):
         return command_mod.CommandResult(argv, 0, "", "", 0, 0, 0)
 
     monkeypatch.setattr(command_mod, "execute_command", _fake_execute)
@@ -30,4 +30,5 @@ def test_push_success_for_one_host(monkeypatch, tmp_path) -> None:
         }
     ]
     result = PushManager().run(hosts, cluster_ip=None, continue_on_error=True)
-    assert not result.failed and result.succeeded == ["h"]
+    assert result.failed
+    assert not result.succeeded

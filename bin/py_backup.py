@@ -39,8 +39,6 @@ LIBRARY = f"{Path(__file__).resolve().parent.parent}{os.sep}pybackup"
 if LIBRARY not in sys.path:
     sys.path.insert(0, LIBRARY)
 
-print("boo", LIBRARY)
-
 
 # --------------------------------------------------------------------------------------
 # Import path bootstrap
@@ -208,17 +206,17 @@ def load_config(config_path: Path) -> Any:
 # Operation imports (tolerant for incremental refactors)
 # --------------------------------------------------------------------------------------
 try:
-    from pybackup.local import LocalBackupManager  # type: ignore
+    from pybackup.operations.local import LocalBackupManager  # type: ignore
 except Exception:  # pragma: no cover
     LocalBackupManager = None  # type: ignore
 
 try:
-    from pybackup.push import PushManager  # type: ignore
+    from pybackup.operations.push import PushManager  # type: ignore
 except Exception:  # pragma: no cover
     PushManager = None  # type: ignore
 
 try:
-    from pybackup.pull import PullManager  # type: ignore
+    from pybackup.operations.pull import PullManager  # type: ignore
 except Exception:  # pragma: no cover
     PullManager = None  # type: ignore
 
@@ -437,6 +435,14 @@ def _add_global_args(parser: argparse.ArgumentParser) -> None:
       None
     """
     parser.add_argument(
+        "--config-file", required=True, help="Path to YAML config file."
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show planned actions without executing them.",
+    )
+    parser.add_argument(
         "--log-file",
         default=DEFAULT_LOG_PATH,
         help=f"Path to log file (default: {DEFAULT_LOG_PATH})",
@@ -460,8 +466,8 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Backup utility with local, push, and pull modes.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    _add_global_args(parser)
 
+    # Create sub parsers
     sub = parser.add_subparsers(dest="command", required=True)
 
     # local
@@ -471,19 +477,12 @@ def _build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p_local.add_argument(
-        "--config-file", required=True, help="Path to YAML config file."
-    )
-    p_local.add_argument(
         "--max-age",
         type=int,
         default=None,
         help="Purge backup files older than this many days (optional).",
     )
-    p_local.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Show planned actions without executing them.",
-    )
+    _add_global_args(p_local)
 
     # push
     p_push = sub.add_parser(
@@ -491,14 +490,7 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Push local backup files to remote servers.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    p_push.add_argument(
-        "--config-file", required=True, help="Path to YAML config file."
-    )
-    p_push.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Show planned actions without executing them.",
-    )
+    _add_global_args(p_push)
 
     # pull
     p_pull = sub.add_parser(
@@ -506,14 +498,7 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Pull backup files from remote servers to this host.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    p_pull.add_argument(
-        "--config-file", required=True, help="Path to YAML config file."
-    )
-    p_pull.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Show planned actions without executing them.",
-    )
+    _add_global_args(p_pull)
 
     return parser
 
@@ -549,10 +534,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         log_error("BK-CLI", f"Configuration file not found: {cfg_path}")
         return EXIT_ERROR
 
+    cfg = load_config(cfg_path)
     try:
         cfg = load_config(cfg_path)
     except Exception as exc:  # pragma: no cover - depends on environment
-        log_error("BK-CFG", f"Failed to load configuration: {exc}")
+        log_error(
+            "BK-CFG", f"Failed to load configuration from {cfg_path}: {exc}"
+        )
         return EXIT_ERROR
 
     # Dispatch.

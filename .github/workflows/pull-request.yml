@@ -54,10 +54,6 @@ jobs:
           source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r .github/workflows/config/requirements.txt
-      - name: Run Python tests for scripts
-        run: |
-          source venv/bin/activate
-          pytest .github/workflows/scripts/test
 
       - name: Run Black Formatter Check
         run: |
@@ -78,3 +74,8 @@ jobs:
         run: |
           source venv/bin/activate
           python .github/workflows/scripts/check_docstrings.py --directories .github
+
+      - name: Run Python tests for code base
+        run: |
+          source venv/bin/activate
+          pytest test

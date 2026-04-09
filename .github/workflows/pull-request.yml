@@ -59,7 +59,7 @@ jobs:
         run: |
           source venv/bin/activate
           black --version
-          black --check .
+          black --check bin test .github
 
       - name: Run Flake8 Linter
         run: |

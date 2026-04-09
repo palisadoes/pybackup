@@ -1,9 +1,8 @@
-# test/pybackup/operations/test_local.py
-"""
-Tests for pybackup.operations.local.
+"""Tests for pybackup.operations.local.
 
-These tests verify cluster gating, that phases compose into a LocalBackupResult,
-and that purge is invoked when requested. All external effects are mocked.
+These tests verify cluster gating, that phases compose into a
+LocalBackupResult, and that purge is invoked when requested.
+All external effects are mocked.
 """
 
 from __future__ import annotations
@@ -30,7 +29,7 @@ def test_run_skips_when_not_master(monkeypatch, tmp_path) -> None:
 
 
 def test_run_happy_path(monkeypatch, tmp_path) -> None:
-    """Test that DB, filesystem, and purge phases are composed into a summary."""
+    """Test that DB, filesystem, and purge phases composed into a summary."""
     import pybackup.operations.local as local_mod
 
     monkeypatch.setattr(

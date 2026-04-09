@@ -1,6 +1,4 @@
-# test/pybackup/operations/test_push.py
-"""
-Tests for pybackup.operations.push.
+"""Tests for pybackup.operations.push.
 
 These tests verify that push attempts are executed per host and that
 continue_on_error determines whether the workflow aborts on first failure.

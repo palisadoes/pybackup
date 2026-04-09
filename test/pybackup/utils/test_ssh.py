@@ -1,6 +1,4 @@
-# test/pybackup/utils/test_ssh.py
-"""
-Tests for pybackup.utils.ssh.
+"""Tests for pybackup.utils.ssh.
 
 These tests verify SSH base arguments, rsync/scp argv construction, and
 that --rsh receives a safely-quoted SSH command string.

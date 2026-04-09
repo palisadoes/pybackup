@@ -1,6 +1,4 @@
-# test/pybackup/utils/test_cluster.py
-"""
-Tests for pybackup.utils.cluster.
+"""Tests for pybackup.utils.cluster.
 
 These tests exercise IP discovery (using stdlib fallback) and the gating
 logic for cluster master checks.

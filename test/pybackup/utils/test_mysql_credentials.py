@@ -1,6 +1,4 @@
-# test/pybackup/utils/test_mysql_credentials.py
-"""
-Tests for pybackup.utils.mysql_credentials.
+"""Tests for pybackup.utils.mysql_credentials.
 
 These tests verify that the context manager creates a 0600 file containing
 the correct [client] stanza and removes it on exit.

@@ -1,6 +1,4 @@
-# test/pybackup/utils/test_logging_config.py
-"""
-Tests for pybackup.utils.logging_config.
+"""Tests for pybackup.utils.logging_config.
 
 These tests configure logging to a temporary file and verify that log
 entries include the expected code tag and formatting.
@@ -9,11 +7,14 @@ entries include the expected code tag and formatting.
 from __future__ import annotations
 
 
-from pybackup.utils.logging_config import get_logger, log_status, setup_logging
+from pybackup.utils.logging_config import log_status, setup_logging
 
 
 def test_setup_logging_and_write(tmp_path) -> None:
-    """Test that setup_logging writes to a file and messages include code tags."""
+    """Test setup_logging.
+
+    Validate that it writes to a file and messages include code tags.
+    """
     log_file = tmp_path / "pybackup.log"
     logger = setup_logging(
         log_file=str(log_file), level="DEBUG", console_output=False

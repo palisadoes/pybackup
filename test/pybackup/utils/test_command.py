@@ -1,6 +1,4 @@
-# test/pybackup/utils/test_command.py
-"""
-Tests for pybackup.utils.command.
+"""Tests for pybackup.utils.command.
 
 These tests verify that commands are executed without a shell, output is
 captured, non-zero codes raise CommandError in check_call, and utilities like
@@ -17,10 +15,11 @@ from pybackup.utils import command as cmd
 
 
 def test_execute_command_success(monkeypatch, fake_cmdresult) -> None:
-    """Test execute_command() success path using a subprocess.run monkeypatch."""
+    """Test execute_command() success using a subprocess.run monkeypatch."""
 
     def _fake_run(argv, **kwargs):
-        # Ensure shell=False behavior (no 'shell' key is passed when using .run direct)
+        # Ensure shell=False behavior
+        # (no 'shell' key is passed when using .run direct)
         assert isinstance(argv, list)
         return fake_cmdresult(returncode=0, stdout="ok\n", stderr="")
 

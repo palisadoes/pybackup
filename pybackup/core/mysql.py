@@ -18,6 +18,7 @@ Typical usage example:
     mgr = MySQLBackupManager(conn=conn, output_dir=Path("/var/backups/db"))
     mgr.validate_environment()
     files = mgr.backup_all()
+
 """
 
 from __future__ import annotations
@@ -77,8 +78,7 @@ class MySQLConnInfo:
 
 
 class MySQLBackupManager:
-    """Creates logical dumps of MySQL/MariaDB databases and
-        writes compressed files.
+    """Create logical dumps of databases and writes compressed files.
 
     This manager encapsulates the following phases:
     1) Environment checks (output directory).

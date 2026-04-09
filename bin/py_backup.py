@@ -83,9 +83,9 @@ except Exception:  # pragma: no cover - fallback for early bootstrapping
     DEFAULT_LOG_PATH = "/var/log/backups/backups.log"
 
 
-# --------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Logging setup (with safe fallbacks)
-# --------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 try:
     from pybackup.utils.logging_config import (
         setup_logging,
@@ -99,14 +99,14 @@ except Exception:  # pragma: no cover - minimal fallback
     def setup_logging(
         level: str = "INFO",
     ) -> logging.Logger:
-        """Set up a minimal logger when pybackup.utils.logging_config
-            is unavailable.
+        """Use minimal logger if pybackup.utils.logging_config is unavailable.
 
         Args:
           level: Logging level name (e.g., 'INFO', 'DEBUG').
 
         Returns:
           logging.Logger: Configured stdlib logger.
+
         """
         logging.basicConfig(
             level=getattr(logging, level.upper(), logging.INFO),

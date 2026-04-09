@@ -1,6 +1,4 @@
-# test/bin/test_pybackup_cli.py
-"""
-CLI tests for bin/py_backup.py.
+"""CLI tests for bin/py_backup.py.
 
 These tests load the CLI module directly from its file path and exercise
 argument parsing, config loading, and dispatch glue using monkeypatches to

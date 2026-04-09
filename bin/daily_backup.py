@@ -116,21 +116,26 @@ def do_push(cli_args):
         if rsync(host) is True:
             # Setup command
             backup_command = f"""\
-/usr/bin/rsync --bwlimit={bwlimit} --compress --archive --ignore-existing --rsh \
-"ssh -i {config.get("ssh_key")} -p {host.get("ssh_port")} \
--o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" {host.get("local_directory")} \
-{host.get("remote_username")}@{host.get("hostname")}:{host.get("remote_directory")}"""
+/usr/bin/rsync --bwlimit={bwlimit} --compress --archive \
+--ignore-existing --rsh "ssh -i \
+{config.get("ssh_key")} -p {host.get("ssh_port")} \
+-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+{host.get("local_directory")} \
+{host.get("remote_username")}@{host.get("hostname")}:\
+{host.get("remote_directory")}"""
 
         else:
             backup_command = f"""\
-/usr/bin/scp -qp -l {bwlimit} -i {config.get("ssh_key")} -P {host.get("ssh_port")} \
--o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-{host.get("local_directory")}/*.tgz \
-{host.get("remote_username")}@{host.get("hostname")}:{host.get("remote_directory")}"""
+/usr/bin/scp -qp -l {bwlimit} -i {config.get("ssh_key")} -P \
+{host.get("ssh_port")} -o UserKnownHostsFile=/dev/null -o \
+StrictHostKeyChecking=no {host.get("local_directory")}/*.tgz \
+{host.get("remote_username")}@{host.get("hostname")}\
+:{host.get("remote_directory")}"""
 
         # Log start
         log_message = f'''\
-Starting to push files to {host.get("hostname")}:{host.get("remote_directory")} from \
+Starting to push files to \
+{host.get("hostname")}:{host.get("remote_directory")} from \
 {host.get("local_directory")}. COMMAND "{backup_command}"'''
         log2die("BK-0016", log_message, die=False)
 

@@ -1,6 +1,4 @@
-# test/pybackup/operations/test_pull.py
-"""
-Tests for pybackup.operations.pull.
+"""Tests for pybackup.operations.pull.
 
 These tests verify that pull attempts are executed per host and that
 continue_on_error determines whether the workflow aborts on first failure.

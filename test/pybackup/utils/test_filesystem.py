@@ -1,6 +1,4 @@
-# test/pybackup/utils/test_filesystem.py
-"""
-Tests for pybackup.utils.filesystem.
+"""Tests for pybackup.utils.filesystem.
 
 These tests exercise directory creation, permission application (best-effort),
 atomic writes for text/bytes, and retention cleanup logic.
@@ -16,16 +14,16 @@ from pybackup.utils.filesystem import (
     ensure_directory,
     ensure_parent_dir,
     list_files_older_than,
-    set_permissions,
-    validate_path_exists,
     write_bytes_atomic,
     write_text_atomic,
 )
 
 
 def test_ensure_directory_and_parent(tmp_path) -> None:
-    """Test ensure_directory() and ensure_parent_dir()
-    create directories idempotently."""
+    """Test ensure_directory() and ensure_parent_dir().
+
+    Validate they create directories idempotently.
+    """
     d = f"{tmp_path}{os.sep}a{os.sep}b"
     ensure_directory(d, dir_mode=0o750)
     assert d.exists() and d.is_dir()

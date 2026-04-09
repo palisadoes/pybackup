@@ -1,6 +1,4 @@
-# test/pybackup/core/test_mysql.py
-"""
-Tests for pybackup.core.mysql.
+"""Tests for pybackup.core.mysql.
 
 These tests mock pymysql and command execution to avoid real database access
 and external binaries. They verify listing databases, per-database dumps,
@@ -66,9 +64,8 @@ def test_list_databases_filters_system(monkeypatch, tmp_path) -> None:
 
 
 def test_backup_database_writes_and_compresses(monkeypatch, tmp_path) -> None:
-    """Test backup_database() writes .sql and compresses to .sql.gz using mocks."""
+    """Test backup_database() writes .sql and zip to .sql.gz using mocks."""
 
-    # Fake execute_command to simulate mysqldump and gzip
     def _fake_execute(argv, **kwargs):
         if "mysqldump" in argv[0]:
             return command_mod.CommandResult(

@@ -1,6 +1,4 @@
-# test/pybackup/core/test_config.py
-"""
-Tests for pybackup.core.config.
+"""Tests for pybackup.core.config.
 
 These tests validate loading a minimal configuration, path expansion, and
 basic field validation errors (e.g., invalid cluster_ip).
@@ -18,7 +16,8 @@ def test_load_minimal_config(tmp_path) -> None:
     """Test that a minimal valid config loads into a BackupConfig instance."""
     y = tmp_path / "c.yaml"
     y.write_text(
-        "backup_dir: /var/backups\nbackup_user: backup\ndirectory: []\nexclude: []\n",
+        """\
+backup_dir: /var/backups\nbackup_user: backup\ndirectory: []\nexclude: []\n""",
         encoding="utf-8",
     )
     cfg = load_config(y)
@@ -31,7 +30,8 @@ def test_invalid_cluster_ip_raises(tmp_path) -> None:
     """Test that an invalid cluster_ip produces a ConfigError with details."""
     y = tmp_path / "c.yaml"
     y.write_text(
-        "backup_dir: /var/backups\nbackup_user: backup\ncluster_ip: invalid-ip\n",
+        """\
+backup_dir: /var/backups\nbackup_user: backup\ncluster_ip: invalid-ip\n""",
         encoding="utf-8",
     )
     with pytest.raises(ConfigError) as ei:

@@ -12,7 +12,7 @@ Violation = namedtuple("Violation", "line function issue action")
 
 
 def validate_docstring(file_path):
-    """Validate docstrings in a file for compliance with the Google style guide.
+    """Validate docstrings in a file compliant with the Google style guide.
 
     Args:
         file_path (str): Path to the Python file to validate.
@@ -751,17 +751,22 @@ Google Docstring 'Args' and 'Returns' sections.""",
             print("")
             for file, issues in sorted(violations.items()):
                 for issue in issues:
-                    print(f"""\
+                    print(
+                        f"""\
 File Docstring Error: {file}
 Line : {issue.line}
 Function: {issue.function}
 Issue: {issue.issue}
 Corrective Action: {issue.action}
-""")
-            print(f"""\
+"""
+                    )
+            print(
+                f"""\
 Follow the online 'Google Python Style Guide' for our docstring expectations.
-There are {len(violations)} file(s) with {total_violations} total docstring violations
-""")
+There are {len(violations)} file(s) with {total_violations} \
+total docstring violations
+"""
+            )
 
             sys.exit(1)
 

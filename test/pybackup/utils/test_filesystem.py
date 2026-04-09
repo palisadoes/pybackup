@@ -24,19 +24,18 @@ def test_ensure_directory_and_parent(tmp_path) -> None:
 
     Validate they create directories idempotently.
     """
-    d = f"{tmp_path}{os.sep}a{os.sep}b"
+    d = tmp_path / "a" / "b"
     ensure_directory(d, dir_mode=0o750)
     assert d.exists() and d.is_dir()
-    f = f"{tmp_path}{os.sep}a{os.sep}c{os.sep}file.txt"
-
+    f = tmp_path / "a" / "c" / "file.txt"
     parent = ensure_parent_dir(f)
     assert parent.exists() and parent.is_dir()
 
 
 def test_atomic_writes_and_permissions(tmp_path) -> None:
     """Test atomic write helpers and permissions application."""
-    t = f"{tmp_path}{os.sep}t.txt"
-    b = f"{tmp_path}{os.sep}b.bin"
+    t = tmp_path / "t.txt"
+    b = tmp_path / "b.bin"
     write_text_atomic(t, "hello\n", mode=0o640)
     write_bytes_atomic(b, b"\x00", mode=0o640)
     assert t.read_text() == "hello\n"

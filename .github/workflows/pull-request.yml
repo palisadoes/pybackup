@@ -58,6 +58,7 @@ jobs:
       - name: Run Black Formatter Check
         run: |
           source venv/bin/activate
+          black --version
           black --check .
 
       - name: Run Flake8 Linter

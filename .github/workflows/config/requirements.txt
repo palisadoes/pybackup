@@ -5,3 +5,4 @@ docstring_parser
 flit-core
 pydantic
 pytest
+psutil

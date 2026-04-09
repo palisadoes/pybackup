@@ -28,10 +28,18 @@ Examples:
 """
 
 from __future__ import annotations
+import os
 import argparse
 import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
+
+# Import the pybackup directory
+LIBRARY = f"{Path(__file__).resolve().parent.parent}{os.sep}pybackup"
+if LIBRARY not in sys.path:
+    sys.path.insert(0, LIBRARY)
+
+print("boo", LIBRARY)
 
 
 # --------------------------------------------------------------------------------------

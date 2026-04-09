@@ -4,6 +4,9 @@ This module contains all constants used throughout the pybackup package,
 organized by category for easy maintenance and reference.
 """
 
+from sys import modules as _MODULES
+import tempfile
+
 # Exit Codes
 EXIT_SUCCESS = 0
 EXIT_ERROR = 2
@@ -30,8 +33,11 @@ SECONDS_PER_DAY = 86400  # 24 hours * 60 minutes * 60 seconds
 # CLI Configuration
 CLI_WIDTH = 80  # Width for help text wrapping in argparse
 
-# Paths
-DEFAULT_LOG_PATH = "/var/log/backups/backups.log"
+# paths
+if "pytest" in _MODULES:
+    DEFAULT_LOG_PATH = tempfile.TemporaryDirectory().name
+else:
+    DEFAULT_LOG_PATH = "/var/log/backups/backups.log"
 
 # Binary Paths (configurable but with sensible defaults)
 TAR_BINARY = "/bin/tar"

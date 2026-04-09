@@ -34,3 +34,16 @@ def test_check_cluster_master_message_when_not_master(monkeypatch) -> None:
         True,
         False,
     )
+
+
+def test_check_cluster_master_message_when_master(monkeypatch) -> None:
+    """Test gating returns True when the requested IP is present."""
+    # Pick an likely IP to be present locally.
+    assert check_cluster_master("127.0.0.1", mode_name="local") in (
+        True,
+        True,
+    )
+    assert check_cluster_master("::1", mode_name="local") in (
+        True,
+        True,
+    )

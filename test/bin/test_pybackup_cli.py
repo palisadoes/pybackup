@@ -8,6 +8,7 @@ avoid real side effects.
 """
 
 from __future__ import annotations
+import os
 
 
 def test_parser_builds(load_cli_module) -> None:
@@ -27,6 +28,8 @@ def test_main_local_success(monkeypatch, tmp_path, load_cli_module) -> None:
     - run_local to return EXIT_SUCCESS without doing real work.
     """
     cli = load_cli_module()
+
+    print("hello", tmp_path)
 
     def _fake_load_config(path):
         return {
@@ -52,11 +55,11 @@ def test_main_local_success(monkeypatch, tmp_path, load_cli_module) -> None:
         [
             "local",
             "--config-file",
-            str(tmp_path / "c.yaml"),
+            f"{tmp_path}{os.sep}c.yaml",
             "--max-age",
             "1",
             "--log-file",
-            str(tmp_path / "t.log"),
+            f"{tmp_path}{os.sep}t.log",
         ]
     )
     assert rc == cli.EXIT_SUCCESS

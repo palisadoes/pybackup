@@ -28,7 +28,7 @@ import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, List, Optional, Sequence
+from typing import Any, List, Optional, Sequence
 
 from pybackup.constants import (
     TAR_BINARY,
@@ -173,7 +173,7 @@ class LocalBackupManager:
         db_files: List[Path] = []
         try:
             if self.mysqldb is not None:
-                db_files = self._backup_mysql(self.backup_dir / "db")
+                db_files = self._backup_mysql(f"{self.backup_dir}{os.sep}db")
         except Exception as exc:
             log_error("BK-LCL-DB", f"Database backup failed: {exc}")
             if db_fail_fast:

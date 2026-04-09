@@ -1,5 +1,4 @@
 # pybackup/core/config.py
-from __future__ import annotations
 
 """
 pybackup.core.config
@@ -22,6 +21,7 @@ Example:
     >>> cfg.backup_dir
     PosixPath('/var/backups')
 """
+from __future__ import annotations
 
 import ipaddress
 import os
@@ -177,7 +177,7 @@ class HostConfig(BaseModel):
             "known_hosts_file",
             pre=True,
         )
-        def _expand_paths_v1(cls, v: Any) -> Any:  # type: ignore[override]
+        def _expand_paths_v1(self, v: Any) -> Any:  # type: ignore[override]
             """Pydantic v1 pre-validation path expander.
 
             Args:
@@ -204,7 +204,7 @@ class HostConfig(BaseModel):
             Raises:
               ValueError: If the port is outside the valid range.
             """
-            if not (1 <= v <= 65535):
+            if not 1 <= v <= 65535:
                 raise ValueError("ssh_port must be between 1 and 65535")
             return v
 
@@ -229,7 +229,7 @@ class HostConfig(BaseModel):
     else:
 
         @field_validator("ssh_port")
-        def _port_range_v1(cls, v: int) -> int:  # type: ignore[override]
+        def _port_range_v1(self, v: int) -> int:  # type: ignore[override]
             """Validate that ssh_port falls within 1..65535.
 
             Args:
@@ -241,12 +241,12 @@ class HostConfig(BaseModel):
             Raises:
               ValueError: If the port is outside the valid range.
             """
-            if not (1 <= v <= 65535):
+            if not 1 <= v <= 65535:
                 raise ValueError("ssh_port must be between 1 and 65535")
             return v
 
         @field_validator("bwlimit")
-        def _bwlimit_positive_v1(cls, v: int) -> int:  # type: ignore[override]
+        def _bwlimit_positive_v1(self, v: int) -> int:  # type: ignore[override]
             """Validate that bwlimit is a positive integer (KB/s).
 
             Args:
@@ -285,7 +285,7 @@ class HostConfig(BaseModel):
     else:
 
         @field_validator("hostname")
-        def _hostname_ok_v1(cls, v: str) -> str:  # type: ignore[override]
+        def _hostname_ok_v1(self, v: str) -> str:  # type: ignore[override]
             """Basic sanity check for the hostname field.
 
             Args:
@@ -353,7 +353,7 @@ class MySQLConfig(BaseModel):
     else:
 
         @field_validator("socket", pre=True)
-        def _expand_sock_v1(cls, v: Any) -> Any:  # type: ignore[override]
+        def _expand_sock_v1(self, v: Any) -> Any:  # type: ignore[override]
             """Pydantic v1 pre-validation path expander for the socket path.
 
             Args:
@@ -365,7 +365,7 @@ class MySQLConfig(BaseModel):
             return _expand_path(v)
 
         @field_validator("user", "password")
-        def _not_empty_v1(cls, v: str) -> str:  # type: ignore[override]
+        def _not_empty_v1(self, v: str) -> str:  # type: ignore[override]
             """Ensure essential credential fields are not empty.
 
             Args:
@@ -450,7 +450,7 @@ class BackupConfig(BaseModel):
     else:
 
         @field_validator("backup_dir", "ssh_key", "log_file", pre=True)
-        def _expand_paths_v1(cls, v: Any) -> Any:  # type: ignore[override]
+        def _expand_paths_v1(self, v: Any) -> Any:  # type: ignore[override]
             """Pydantic v1 pre-validation path expander for top-level paths.
 
             Args:
@@ -462,7 +462,7 @@ class BackupConfig(BaseModel):
             return _expand_path(v)
 
         @field_validator("directory", pre=True)
-        def _expand_dir_list_v1(cls, v: Any) -> Any:  # type: ignore[override]
+        def _expand_dir_list_v1(self, v: Any) -> Any:  # type: ignore[override]
             """Normalize 'directory' to a list and expand each entry.
 
             Args:
@@ -500,7 +500,7 @@ class BackupConfig(BaseModel):
     else:
 
         @field_validator("backup_user")
-        def _user_not_empty_v1(cls, v: str) -> str:  # type: ignore[override]
+        def _user_not_empty_v1(self, v: str) -> str:  # type: ignore[override]
             """Ensure backup_user is not empty or whitespace-only.
 
             Args:
@@ -546,7 +546,7 @@ class BackupConfig(BaseModel):
     else:
 
         @field_validator("cluster_ip")
-        def _cluster_ip_ok_v1(cls, v: Optional[str]) -> Optional[str]:  # type: ignore[override]
+        def _cluster_ip_ok_v1(self, v: Optional[str]) -> Optional[str]:  # type: ignore[override]
             """Validate that cluster_ip, when present, is a valid IPv4/IPv6.
 
             Args:
@@ -581,13 +581,17 @@ class BackupConfig(BaseModel):
             Returns:
               BackupConfig: The same instance, normalized.
             """
-            self.directory = [p for p in self.directory if p is not None]  # type: ignore[assignment]
+            self.directory = [
+                p for p in self.directory if p is not None
+            ]  # type: ignore[assignment]
             return self
 
     else:
 
         @model_validator(pre=False)
-        def _normalize_after_v1(cls, values: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore[override]
+        def _normalize_after_v1(
+            self, values: Dict[str, Any]
+        ) -> Dict[str, Any]:  # type: ignore[override]
             """Normalize fields after parsing.
 
             Drops any None entries in directory that may result from pre-

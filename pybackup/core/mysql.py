@@ -237,11 +237,9 @@ class MySQLBackupManager:
 
             res = execute_command(dump_args)
             if res.returncode != 0:
-                raise RuntimeError(
-                    f"""\
+                raise RuntimeError(f"""\
 mysqldump failed for '{name}' (code={res.returncode}): \
-{res.stderr or res.stdout}"""
-                )
+{res.stderr or res.stdout}""")
 
         # 2) Write stdout to a temporary .sql (avoid shell pipelines).
         try:
@@ -262,10 +260,8 @@ mysqldump failed for '{name}' (code={res.returncode}): \
         gz = execute_command(gz_args)
         if gz.returncode != 0:
             # If gzip fails, the .sql file may remain present.
-            raise RuntimeError(
-                f"""\
-gzip failed for '{name}' (code={gz.returncode}): {gz.stderr or gz.stdout}"""
-            )
+            raise RuntimeError(f"""\
+gzip failed for '{name}' (code={gz.returncode}): {gz.stderr or gz.stdout}""")
 
         # 4) Harden permissions on the final .gz.
         try:

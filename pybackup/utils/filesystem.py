@@ -38,7 +38,6 @@ from pybackup.constants import (
 )
 from pybackup.utils.logging_config import log_status, log_warning
 
-
 # Public API exported by this module.
 __all__ = [
     "ensure_directory",

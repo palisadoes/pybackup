@@ -225,10 +225,8 @@ class PullManager:
         log_status("BK-PULL-HOST", f"[{tool}] {hostname}: {src} -> {dst}")
         result = execute_command(argv)
         if result.returncode != 0:
-            raise RuntimeError(
-                f"""\
-{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"""
-            )
+            raise RuntimeError(f"""\
+{tool} failed (code={result.returncode}): {result.stderr or result.stdout}""")
 
     # ------------------------------------------------------------------ #
     # Private helpers (module-level style but grouped here for clarity)

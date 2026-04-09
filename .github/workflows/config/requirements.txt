@@ -8,4 +8,4 @@ pytest
 psutil
 flake8
 flake8-docstrings
-black
+black==26.3.1

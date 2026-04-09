@@ -34,7 +34,6 @@ import shutil
 import subprocess
 import time
 
-
 # Public API exported by this module.
 __all__ = [
     "CommandResult",

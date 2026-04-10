@@ -136,10 +136,7 @@ class PushManager:
                 log_warning(
                     "BK-PUSH-INT", f"Interrupted while pushing to {hostname}"
                 )
-                failed.append(hostname)
-                details[hostname] = "interrupted"
-                if not continue_on_error:
-                    raise
+                raise
             except Exception as exc:
                 log_error(
                     "BK-PUSH-ERR", f"Failed pushing to {hostname}: {exc}"
@@ -237,8 +234,10 @@ class PushManager:
         log_status("BK-PUSH-HOST", f"[{tool}] {src} -> {dst}")
         result = execute_command(argv)
         if result.returncode != 0:
-            raise RuntimeError(f"""\
-{tool} failed (code={result.returncode}): {result.stderr or result.stdout}""")
+            raise RuntimeError(
+                f"""\
+{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"""
+            )
 
 
 # ---------------------------------------------------------------------- #

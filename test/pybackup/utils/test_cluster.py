@@ -31,7 +31,7 @@ def test_check_cluster_master_message_when_not_master(monkeypatch) -> None:
 
     monkeypatch.setattr(
         "pybackup.utils.cluster.get_local_ips",
-        lambda include_loopback=True, ipv6=False: (
+        lambda _include_loopback=True, ipv6=False: (
             ["10.0.0.10"] if not ipv6 else ["fe80::1"]
         ),
     )
@@ -47,7 +47,7 @@ def test_check_cluster_master_message_when_master(monkeypatch) -> None:
     # Pick an likely IP to be present locally.
     monkeypatch.setattr(
         "pybackup.utils.cluster.get_local_ips",
-        lambda include_loopback=True, ipv6=False: (
+        lambda _include_loopback=True, ipv6=False: (
             ["127.0.0.1"] if not ipv6 else ["::1"]
         ),
     )

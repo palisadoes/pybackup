@@ -1,0 +1,11 @@
+pymysql
+netifaces
+pyyaml
+docstring_parser
+flit-core
+pydantic
+pytest
+psutil
+flake8
+flake8-docstrings
+black==26.3.1

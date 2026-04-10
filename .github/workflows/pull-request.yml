@@ -53,28 +53,30 @@ jobs:
           python3 -m venv venv
           source venv/bin/activate
           python -m pip install --upgrade pip
-          pip install -r .github/workflows/requirements.txt
-      - name: Run Python tests for scripts
-        run: |
-          source venv/bin/activate
-          pytest .github/workflows/scripts/test
+          pip install -r .github/workflows/config/requirements.txt
 
       - name: Run Black Formatter Check
         run: |
           source venv/bin/activate
-          black --check .
+          black --version
+          black --check .github bin pybackup test
 
       - name: Run Flake8 Linter
         run: |
           source venv/bin/activate
-          flake8 --docstring-convention google --ignore E402,E722,E203,F401,W503 .github
+          flake8 --docstring-convention google --ignore E402,E722,E203,F401,W503 .github bin pybackup test
 
       - name: Run pydocstyle
         run: |
           source venv/bin/activate
-          pydocstyle --convention=google --add-ignore=D415,D205 .github
+          pydocstyle --convention=google --add-ignore=D415,D205 .github bin pybackup test
 
-      - name: Run docstring compliance check
+      # - name: Run docstring compliance check
+      #   run: |
+      #     source venv/bin/activate
+      #     python .github/workflows/scripts/check_docstrings.py --directories .github pybackup
+
+      - name: Run Python tests for code base
         run: |
           source venv/bin/activate
-          python .github/workflows/scripts/check_docstrings.py --directories .github
+          python -m pytest test

@@ -234,10 +234,8 @@ class PushManager:
         log_status("BK-PUSH-HOST", f"[{tool}] {src} -> {dst}")
         result = execute_command(argv)
         if result.returncode != 0:
-            raise RuntimeError(
-                f"""\
-{tool} failed (code={result.returncode}): {result.stderr or result.stdout}"""
-            )
+            raise RuntimeError(f"""\
+{tool} failed (code={result.returncode}): {result.stderr or result.stdout}""")
 
 
 # ---------------------------------------------------------------------- #

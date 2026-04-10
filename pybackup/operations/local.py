@@ -224,10 +224,8 @@ class LocalBackupManager:
                 temp_archive.unlink(missing_ok=True)
             except Exception:
                 pass
-            raise RuntimeError(
-                f"""\
-tar failed (code={result.returncode}): {result.stderr or result.stdout}"""
-            )
+            raise RuntimeError(f"""\
+tar failed (code={result.returncode}): {result.stderr or result.stdout}""")
 
         # Apply permissions to the temporary file, then atomically rename.
         try:
@@ -266,10 +264,8 @@ tar failed (code={result.returncode}): {result.stderr or result.stdout}"""
         socket_value = _get_attr_or_key(self.mysqldb, "socket", None)
 
         if not user or not password:
-            raise RuntimeError(
-                """\
-MySQL credentials incomplete: 'user' and 'password' are required"""
-            )
+            raise RuntimeError("""\
+MySQL credentials incomplete: 'user' and 'password' are required""")
 
         sock_path = Path(socket_value) if socket_value else None
 

@@ -579,6 +579,9 @@ class BackupConfig(BaseModel):
             Drops any None entries in directory that may result from pre-
             expansion of invalid/blank elements.
 
+            Args:
+              None
+
             Returns:
               BackupConfig: The same instance, normalized.
             """

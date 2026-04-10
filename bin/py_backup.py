@@ -56,8 +56,14 @@ def _ensure_repo_root_on_sys_path() -> None:
     If the repository root is not present in sys.path, it is inserted at the
     front so local sources take precedence over any globally installed package.
 
+    Args:
+        None
+
+    Returns:
+        None
+
     Raises:
-      None
+       None
     """
     repo_root = Path(__file__).resolve().parents[1]
     repo_str = str(repo_root)
@@ -115,19 +121,45 @@ except Exception:  # pragma: no cover - minimal fallback
         return logging.getLogger("pybackup")
 
     def log_status(code: str, message: str) -> None:
-        """Log a non-error status message (fallback)."""
+        """Log a non-error status message (fallback).
+
+        Args:
+            code: Status code
+            message: Log message
+
+        Returns:
+            None
+        """
         import logging as _logging
 
         _logging.getLogger("pybackup").info(f"[{code}] {message}")
 
     def log_warning(code: str, message: str) -> None:
-        """Log a warning message (fallback)."""
+        """Log a warning message (fallback).
+
+        Args:
+            code: Status code
+            message: Log message
+
+        Returns:
+            None
+
+        """
         import logging as _logging
 
         _logging.getLogger("pybackup").warning(f"[{code}] {message}")
 
     def log_error(code: str, message: str) -> None:
-        """Log an error message (fallback)."""
+        """Log an error message (fallback).
+
+        Args:
+            code: Status code
+            message: Log message
+
+        Returns:
+            None
+
+        """
         import logging as _logging
 
         _logging.getLogger("pybackup").error(f"[{code}] {message}")
@@ -248,6 +280,7 @@ def _as_dict(obj: Any) -> Dict[str, Any]:
 
     Returns:
       Dict[str, Any]: A dictionary representation of the input object.
+
     """
     if hasattr(obj, "model_dump") and callable(getattr(obj, "model_dump")):
         return obj.model_dump()  # Pydantic v2
@@ -451,8 +484,12 @@ def _add_global_args(parser: argparse.ArgumentParser) -> None:
 def _build_parser() -> argparse.ArgumentParser:
     """Construct the CLI argument parser with subcommands.
 
+    Args:
+        None
+
     Returns:
       argparse.ArgumentParser: Configured parser for the pybackup CLI.
+
     """
     parser = argparse.ArgumentParser(
         prog="pybackup",

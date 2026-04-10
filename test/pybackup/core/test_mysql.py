@@ -65,6 +65,7 @@ def test_list_databases_filters_system(monkeypatch, tmp_path) -> None:
 
 def test_backup_database_writes_and_compresses(monkeypatch, tmp_path) -> None:
     """Test backup_database() writes .sql and zip to .sql.gz using mocks."""
+    import pybackup.core.mysql as mysql_mod  # <-- import the module under test
 
     def _fake_execute(argv, **kwargs):
         if "mysqldump" in argv[0]:
@@ -72,14 +73,19 @@ def test_backup_database_writes_and_compresses(monkeypatch, tmp_path) -> None:
                 argv, 0, "CREATE TABLE t();\n", "", 0, 0, 0
             )
         if "gzip" in argv[0]:
-            # Simulate gzip success
+            # Find the .sql file argument and create the .sql.gz on disk
+            # so that out.exists() passes.
+            sql_path = next(
+                (Path(a) for a in argv if a.endswith(".sql")), None
+            )
+            if sql_path and sql_path.exists():
+                gz_path = sql_path.parent / (sql_path.name + ".gz")
+                gz_path.write_bytes(b"")  # create empty placeholder
             return command_mod.CommandResult(argv, 0, "", "", 0, 0, 0)
-        raise AssertionError("Unexpected command")
+        raise AssertionError(f"Unexpected command: {argv}")
 
-    monkeypatch.setattr(command_mod, "execute_command", _fake_execute)
-
-    # mysql_defaults_file yields a path (we don't inspect content here)
-    import pybackup.utils.mysql_credentials as cred_mod
+    # Patch in mysql_mod's namespace, not in the source module's namespace
+    monkeypatch.setattr(mysql_mod, "execute_command", _fake_execute)
 
     class _Ctx:
         def __init__(self, p: Path):
@@ -94,7 +100,8 @@ def test_backup_database_writes_and_compresses(monkeypatch, tmp_path) -> None:
     def _fake_defaults(user, password, socket=None):
         return _Ctx(tmp_path / "cnf.cnf")
 
-    monkeypatch.setattr(cred_mod, "mysql_defaults_file", _fake_defaults)
+    # Patch in mysql_mod's namespace, not in cred_mod's namespace
+    monkeypatch.setattr(mysql_mod, "mysql_defaults_file", _fake_defaults)
 
     mgr = MySQLBackupManager(
         MySQLConnInfo("u", "p", socket=tmp_path / "sock"), tmp_path
@@ -102,6 +109,4 @@ def test_backup_database_writes_and_compresses(monkeypatch, tmp_path) -> None:
     mgr.validate_environment()
     out = mgr.backup_database("db1")
     assert out.suffixes[-2:] == [".sql", ".gz"]
-    assert (
-        out.exists()
-    )  # gzip mock does not create the final file on disk; replace expectation
+    assert out.exists()

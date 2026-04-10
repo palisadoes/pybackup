@@ -79,4 +79,4 @@ jobs:
       - name: Run Python tests for code base
         run: |
           source venv/bin/activate
-          pytest test
+          python -m pytest test
